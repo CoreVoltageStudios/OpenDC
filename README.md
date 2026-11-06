@@ -3,7 +3,7 @@ Bring your copy of Dark Colony back to life. Import your original game files, wa
 
 OpenDC is an independent restoration by Core Voltage Studios for modern Windows PCs. Play the 30 original campaign missions, learn both factions across 14 training lessons, or take the fight to one of 56 War maps. The Council Wars adds 16 campaign missions. Up to eight players can battle or form alliances over LAN or direct IP.
 
-Play on Windows: Download the installer from Releases, launch OpenDC, and follow the prompts to import your compatible English EU copy of Dark Colony. You can add The Council Wars during setup or later from Options → Game content.
+Play on Windows: Download the installer from [Releases](https://github.com/CoreVoltageStudios/OpenDC/releases), launch OpenDC, and follow the prompts to import your compatible English EU copy of Dark Colony. You can add The Council Wars during setup or later from Options → Game content.
 
 Found a bug? Tell us which build you played, what happened, and how to reproduce it in [GitHub Issues](https://github.com/CoreVoltageStudios/OpenDC/issues).
 
