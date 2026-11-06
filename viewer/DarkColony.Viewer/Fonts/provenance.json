@@ -1,0 +1,62 @@
+﻿[
+    {
+        "file":  "Barlow-Regular.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/Barlow-Regular.ttf",
+        "sha256":  "95aa02c7c43096e0dd44d787ba6216864a67157e402adab59b35572e0c1577ea"
+    },
+    {
+        "file":  "Barlow-Medium.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/Barlow-Medium.ttf",
+        "sha256":  "f8906f762cb73dca441da034bc363b2d8e2e68bc10d5c05e58717646c20cc4b4"
+    },
+    {
+        "file":  "Barlow-SemiBold.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/Barlow-SemiBold.ttf",
+        "sha256":  "86577cb32f8abe3673db53ca0f4221e6856751a4f6730c867e00f720f8bb1fc5"
+    },
+    {
+        "file":  "Barlow-Bold.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/Barlow-Bold.ttf",
+        "sha256":  "84e6a4d61e7c3e21f3c50ea6a4f7e5303a3467864c038be6ea3759bab8d547f9"
+    },
+    {
+        "file":  "barlow-OFL.txt",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/OFL.txt",
+        "sha256":  "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+    },
+    {
+        "file":  "ShareTechMono-Regular.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/sharetechmono/ShareTechMono-Regular.ttf",
+        "sha256":  "9ceab1f87414829af259c0f537573ae03ef7dd3147c0b27a36a1a0beb6732677"
+    },
+    {
+        "file":  "sharetechmono-OFL.txt",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/sharetechmono/OFL.txt",
+        "sha256":  "9d96f445b6e9c701428811d0177f894874f8d6f07ecc30d568c506542368f3ff"
+    },
+    {
+        "file":  "RedHatDisplay-Variable.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/redhatdisplay/RedHatDisplay%5Bwght%5D.ttf",
+        "sha256":  "46c9d4c4a2415e7e72020b318f5cda2bcbc9018d78b1a67e480a76d8d6e4b379"
+    },
+    {
+        "file":  "redhatdisplay-OFL.txt",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/redhatdisplay/OFL.txt",
+        "sha256":  "435fbfb7e66988b2a06686a4cb966faec733f35d8fe100a1601573c27f3e0bb8"
+    },
+    {
+        "file":  "BarlowSemiCondensed-Medium.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowsemicondensed/BarlowSemiCondensed-Medium.ttf",
+        "sha256":  "4998b693a190b76f2b11315844345a8546c1e2e6a320905507a9eed04edf8b48"
+    },
+    {
+        "file":  "BarlowSemiCondensed-SemiBold.ttf",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowsemicondensed/BarlowSemiCondensed-SemiBold.ttf",
+        "sha256":  "bd299f4bc5b44d30be8d42e9bad3a5df7d66af1cd55d0ed72a8b8916360a1424"
+    },
+    {
+        "file":  "barlowsemicondensed-OFL.txt",
+        "url":  "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowsemicondensed/OFL.txt",
+        "sha256":  "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+    }
+]

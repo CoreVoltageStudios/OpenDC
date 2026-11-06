@@ -1,0 +1,2 @@
+# Preserve the verified baseline bytes; no automatic line-ending conversion.
+* -text

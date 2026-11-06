@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup>
+ <ItemGroup><ProjectReference Include="../DarkColony.Original/DarkColony.Original.csproj"/><ProjectReference Include="../DarkColony.Media/DarkColony.Media.csproj"/></ItemGroup>
+ <ItemGroup><EmbeddedResource Include="content-contract.json"/><EmbeddedResource Include="council-native-map.json"/></ItemGroup>
+</Project>

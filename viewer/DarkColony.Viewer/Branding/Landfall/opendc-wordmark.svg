@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="404" height="80" viewBox="0 0 404 80" role="img" aria-label="OpenDC">
+  <title>OpenDC</title>
+  <!-- Approved OpenDC wordmark "Survey": light, wide, constructed letters with clipped corners.
+       Stroke-built: 6-unit strokes, 60-unit cap height, descender to 78. Mitred joins, butt ends.
+       "Open" warm off-white #ECE8DD, "DC" muted metal #C4BBA7. Transparent background, for dark grounds.
+       Display at 92 px tall in the 1080p main menu (scale 1.15). Below 24 px tall use opendc-wordmark-mono.svg. -->
+  <g fill="none" stroke-width="6" stroke-linecap="butt" stroke-linejoin="miter">
+    <g stroke="#ECE8DD">
+      <path d="M15 3 H63 V45 L51 57 H3 V15 Z"/>
+      <path transform="translate(76 0)" d="M3 18 V78 M3 21 H49 V45 L37 57 H3"/>
+      <path transform="translate(138 0)" d="M3 39 H49 V21 H15 L3 33 V57 H49"/>
+      <path transform="translate(200 0)" d="M3 18 V60 M3 21 H37 L49 33 V60"/>
+    </g>
+    <g stroke="#C4BBA7">
+      <path transform="translate(262 0)" d="M3 3 H51 L63 15 V45 L51 57 H3 Z"/>
+      <path transform="translate(338 0)" d="M63 3 H15 L3 15 V57 H63"/>
+    </g>
+  </g>
+</svg>

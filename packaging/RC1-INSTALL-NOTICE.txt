@@ -1,0 +1,21 @@
+OpenDC 1.0.0 RC1
+Core Voltage Studios
+
+This local release candidate contains the engine and importer only.
+Supply your own legally obtained Dark Colony files. Original content belongs to
+its respective rights holders. OpenDC is an independent project. Council Wars
+is an optional import and is not required for base-game play.
+
+First launch guides you through content setup. Imported content, saves and
+preferences remain outside the application folder and are preserved on uninstall.
+Internet accounts and downloads of original game content are not required.
+
+This unsigned candidate has not completed clean-Windows or two-computer LAN/
+Hamachi acceptance. Do not bypass Windows security protections. Public build redistribution requires separate permission for reserved presentation.
+See the installed Notices/ASSET-LICENSES.md; source code remains MIT licensed.
+
+No legacy private development installation is removed automatically. If you have
+that old release, uninstall it manually before using the normal OpenDC installation.
+Do not delete your player data or imported library when uninstalling it.
+
+Installer built with Inno Setup, https://jrsoftware.org/ .

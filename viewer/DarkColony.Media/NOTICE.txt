@@ -1,0 +1,19 @@
+OpenDC managed Cinepak RGB decoder
+
+Cinepak.cs is a managed adaptation of FFmpeg n7.1 libavcodec/cinepak.c:
+https://github.com/FFmpeg/FFmpeg/blob/n7.1/libavcodec/cinepak.c
+Copyright (C) 2003 The FFmpeg project. Author: Ewald Snel.
+Cinepak colorspace support (C) 2013 Rl, Aetey Global Technologies AB.
+Managed adaptation Copyright (C) 2026 Dennis Nilsson.
+Licensed LGPL-2.1-or-later. See COPYING.LGPLv2.1.
+
+Changes: managed RGB-only decoder, explicit bounds, no FFmpeg framework or native
+binary dependency, no Sega/palettized-video support. AVI demux, PCM conversion and
+ODCV2 indexed writer are OpenDC code. No FFmpeg executable or development GPL build
+is included. Source for the modified library is in viewer/DarkColony.Media; build
+with dotnet build -c Release. It is a separate replaceable .NET assembly.
+
+Any future public engine distribution must include this notice/license and complete
+corresponding source for the modified library; preserve the ability to replace or
+relink it and do not prohibit debugging modifications. This source-build milestone
+does not itself publish/distribute a release or claim legal clearance for game assets.

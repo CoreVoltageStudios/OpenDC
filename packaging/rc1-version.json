@@ -1,0 +1,8 @@
+{
+  "product": "OpenDC",
+  "publisher": "Core Voltage Studios",
+  "displayVersion": "1.0.0 RC1",
+  "semanticVersion": "1.0.0-rc.1",
+  "windowsVersion": "1.0.0.1",
+  "installerId": "OpenDC.Engine"
+}

@@ -1,0 +1,11 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+ <PropertyGroup><TargetFramework>net8.0</TargetFramework><EnableDynamicLoading>true</EnableDynamicLoading><Product>OpenDC</Product><Company>Core Voltage Studios</Company><Title>OpenDC</Title><AssemblyTitle>OpenDC</AssemblyTitle></PropertyGroup>
+ <ItemGroup><ProjectReference Include="../DarkColony.Import/DarkColony.Import.csproj" /></ItemGroup>
+ <ItemGroup><ProjectReference Include="../DarkColony.Assets/DarkColony.Assets.csproj" /><ProjectReference Include="../DarkColony.Simulation/DarkColony.Simulation.csproj" /><ProjectReference Include="../DarkColony.Original/DarkColony.Original.csproj" /></ItemGroup>
+ <ItemGroup><Compile Include="../../tools/InterferenceRoute.cs" Link="Diagnostics/InterferenceRoute.cs" /></ItemGroup>
+ <ItemGroup><Compile Include="../../tools/LegacyRoute.cs" Link="Diagnostics/LegacyRoute.cs" /></ItemGroup>
+ <ItemGroup><Compile Include="../../tools/BreakthroughRoute.cs" Link="Diagnostics/BreakthroughRoute.cs" /></ItemGroup>
+ <ItemGroup><Compile Include="../../tools/RoswellRoute.cs" Link="Diagnostics/RoswellRoute.cs" /></ItemGroup>
+ <ItemGroup><Compile Include="../../tools/PuppetRoute.cs" Link="Diagnostics/PuppetRoute.cs" /></ItemGroup>
+ <ItemGroup><Compile Include="../../tools/CivilWarRoute.cs" Link="Diagnostics/CivilWarRoute.cs" /></ItemGroup>
+</Project>

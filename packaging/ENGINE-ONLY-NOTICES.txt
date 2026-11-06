@@ -1,0 +1,48 @@
+OpenDC - local engine-only source validation
+Studio: Core Voltage Studios
+
+No Dark Colony or Council Wars game content is included. The importer requires
+compatible files supplied by the player. Original assets belong to their respective
+rights holders; OpenDC is independent. Compatibility is not proof of ownership.
+
+Original release credits
+
+Historical notices transcribed separately from each title's preserved original
+materials; names, years and wording are retained as printed.
+
+Dark Colony
+©1997 Strategic Simulations, Inc® A Mindscape Company. All rights Reserved
+©1997 Take 2 Interactive Software Europe. Inc.
+
+Dark Colony: The Council Wars
+©1997 Strategic Simulations, Inc® A Mindscape Company. All rights Reserved
+©1997 Take 2 Interactive Software Europe. Inc.
+
+Both titles' original credits list Take 2 Interactive Software Canada and,
+under STRATEGIC SIMULATIONS, PRODUCER: Rick White and
+ASSOCIATE PRODUCER: Jon Kromrey.
+
+These historical credits do not establish current ownership or grant permission
+to redistribute original game content. OpenDC is an independent project.
+
+Runtime components (exact versions/hashes accompany the export inventory):
+- Godot 4.7.2 engine, GodotSharp and bundled engine components: MIT and the
+  third-party licenses reproduced in Notices/GODOT-COPYRIGHT.txt. The validation
+  diagnostic records the running template's actual compiled component/license list.
+- Microsoft .NET 8 self-contained Windows x64 runtime: MIT and component notices
+  in Notices/DOTNET-LICENSE.txt and DOTNET-THIRD-PARTY-NOTICES.txt, copied from the
+  precise runtime pack selected by the exporter, not an older development runtime.
+- Barlow, Share Tech Mono and Red Hat Display: SIL Open Font License 1.1;
+  their copyright and license files are in Notices and in the resource pack.
+- DarkColony.Media: managed FFmpeg n7.1 Cinepak adaptation, LGPL-2.1-or-later.
+  Notice and license in Notices; complete modified library source in Source/Media.
+  This DLL remains replaceable. Modification/relinking and debugging modifications
+  must not be prohibited. No FFmpeg executable or external converter is included.
+
+Original engine code: Copyright (c) 2026 Dennis Nilsson, MIT License.
+Studio credit: Core Voltage Studios. See Notices/OPENDC-LICENSE.txt.
+Reserved Landfall/Relay/studio presentation permits public source forks, local
+builds and private running. Public redistribution of a build retaining it requires
+separate permission. See Notices/ASSET-LICENSES.md and its file/symbol register.
+The five identified cues remain CC BY4.0; third-party terms remain unchanged.
+No license here grants rights to redistribute original game content.
