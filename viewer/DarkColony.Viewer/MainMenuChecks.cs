@@ -6,7 +6,8 @@ public partial class Viewer {
  public async void MainMenuSuite(){try{
   missionHarnessManual=true;await ToSignal(GetTree(),SceneTree.SignalName.ProcessFrame);
   Check(mainMenu&&mission==null&&nativeWorld==null,"Normal main menu owns no active session");await MenuCapture("main-menu");
-  if(missionSuite=="network-names"){await VerifyNetworkNames();}
+  if(missionSuite=="name-preference"){await VerifyNamePreference();}
+  else if(missionSuite=="network-names"){await VerifyNetworkNames();}
   else if(missionSuite=="enet-departure"){await VerifyDepartureUi();}
   else if(missionSuite=="landfall-replay"){await VerifyLandfallReplay();}
   else if(missionSuite=="landfall-results"){await VerifyLandfallResults();}

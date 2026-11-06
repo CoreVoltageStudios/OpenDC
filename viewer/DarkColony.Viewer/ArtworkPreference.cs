@@ -37,6 +37,11 @@ public static class ArtworkPreference {
  // copied beside the file (player-settings.malformed-<UTC>.json) before a fresh object is
  // written, so later changes persist again. Returns that preserved copy, if one was made.
  // Unrelated keys of a readable file survive. Storage failures still throw IOException.
+ public static string LoadMultiplayerName(string path){
+  try{using var d=JsonDocument.Parse(File.ReadAllText(path));return d.RootElement.TryGetProperty("multiplayerDisplayName",out var v)&&v.ValueKind==JsonValueKind.String?v.GetString()??"":"";}
+  catch(Exception e)when(e is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException){return "";}
+ }
+ public static string? SaveMultiplayerName(string path,string name)=>Update(path,n=>n["multiplayerDisplayName"]=name);
  public static string? SaveReducedMotion(string path,bool reduced)=>Update(path,n=>n["reducedMotion"]=reduced);
  public static string? SaveAspect(string path,int aspect)=>Update(path,n=>n["maximumAspect"]=aspect);
  static string? Update(string path,Action<JsonObject> update){
