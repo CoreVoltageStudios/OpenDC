@@ -12,7 +12,7 @@ public partial class Viewer {
  void ReturnMainMenu(){
   ClearLocalPause();
   CloseNetwork();HideWarSetup();ShutdownMissionMedia();missionMixer=null!;briefingVoice=null;transportAudio.Clear();missionSoundPaths.Clear();missionAudioAudit.Clear();
-  mission=null!;nativeWorld=null!;missionSounds=null!;missionRewards=null;campaignEntry=null;interferenceRoute=null;legacyRoute=null;breakthroughRoute=null;roswellRoute=null;
+  mission=null!;nativeWorld=null!;nativeOcclusion=null!;missionSounds=null!;missionRewards=null;campaignEntry=null;interferenceRoute=null;legacyRoute=null;breakthroughRoute=null;roswellRoute=null;
   nativeSelection.Clear();markerOffsets.Clear();interfaceClips.Clear();interfaceBanks.Clear();
   miniBase=miniPixels=miniVisibility=Array.Empty<byte>();miniSelector=-1;
   nativeAccumulator=missionWall=0;missionFault=null;missionNext=missionBriefing=missionOutcomeShown=campaignWritePending=false;
