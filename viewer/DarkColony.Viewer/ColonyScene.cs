@@ -24,7 +24,9 @@ public partial class ColonyScene : Control {
  public override void _Process(double delta){if(!Visible)return;clock+=delta;QueueRedraw();}
  static float Ease(float v){v=Math.Clamp(v,0,1);return v*v*(3-2*v);}
  // FIN city components already contain their offsets from this common artwork anchor.
- static readonly Vector2 CityAnchor=new(1100,420);
+ // Ground contacts sit inside the basin; sprite height may cross the skyline.
+ static readonly Vector2 CityAnchor=new(1020,430);
+ static readonly Vector2 DishAnchor=new(1080,480),BeaconAnchor=new(1050,545);
  static readonly Vector2 TowerApex=CityAnchor+new Vector2(0,-266);
  public Vector2 TowerTip {get;private set;}
  public override void _Draw(){
@@ -42,13 +44,13 @@ public partial class ColonyScene : Control {
    DrawTextureRect(frame.Texture,new(origin+new Vector2(x+frame.X,y+frame.Y)*s,frame.Texture.GetSize()*s),false,new Color(1,1,1,Contact));
   }
   bool on=Settled||Awakening;
-  Sprite("dish",1318,392,on&&t>=2.3,2.3);
+  Sprite("dish",DishAnchor.X,DishAnchor.Y,on&&t>=2.3,2.3);
   // Match the original city back-to-front order; logical slot offsets are not draw anchors.
   Sprite("tower",CityAnchor.X,CityAnchor.Y,on);
   Sprite("exco",CityAnchor.X,CityAnchor.Y,on&&t>=1,1);
   Sprite("brrk",CityAnchor.X,CityAnchor.Y,on&&t>=1,1);
-  Sprite(on&&t>=1.6?"beaconOn":"beaconOff",1238,512,on&&t>=1.6,1.6);
-  if(on&&t>=2.8&&!Reduced){double lift=clips["lift"].Sum(f=>f.Seconds);if(t<2.8+lift)Sprite("lift",1100,420,true,2.8,true);else{float walk=Math.Clamp((float)(t-2.8-lift)/3.2f,0,1);Sprite(walk<1?"walk":"stand",1102-102*walk,459+53*walk,true,2.8+lift);}}
+  Sprite(on&&t>=1.6?"beaconOn":"beaconOff",BeaconAnchor.X,BeaconAnchor.Y,on&&t>=1.6,1.6);
+  if(on&&t>=2.8&&!Reduced){double lift=clips["lift"].Sum(f=>f.Seconds);if(t<2.8+lift)Sprite("lift",CityAnchor.X,CityAnchor.Y,true,2.8,true);else{float walk=Math.Clamp((float)(t-2.8-lift)/3.2f,0,1);Sprite(walk<1?"walk":"stand",CityAnchor.X+2-102*walk,CityAnchor.Y+39+53*walk,true,2.8+lift);}}
   float side=(Size.X-Math.Min(Size.X,Size.Y*4/3))/2*(1-opened);if(side>0){DrawRect(new(0,0,side,Size.Y),new Color("090a08"));DrawRect(new(Size.X-side,0,side,Size.Y),new Color("090a08"));}
  }
  public static Art Build(PresentationSnapshot source){
