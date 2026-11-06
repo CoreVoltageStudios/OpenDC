@@ -50,7 +50,7 @@ public partial class Viewer {
   UiLabel(saved?"YOUR LAST TRANSMISSION":"BEGIN YOUR JOURNEY",x,y,14,OdcUiTokens.Signal);y+=22;
   UiButton(hero,saved?"Continue":"Campaign",new(x-16,y,680,76),saved?"Resume the newest valid save":"Choose a campaign or training",active:true);
   UiTextLine(saved?saveTitles[continueSlot]:"Two worlds. One colony.",new(x,y+83,650,32),24,OdcUiTokens.Secondary);
-  if(saved)UiTextLine($"SLOT {continueSlot+1} Â· {saveDates[continueSlot]} Â· {saveCampaigns[continueSlot]}",new(x,y+118,650,25),14,OdcUiTokens.Muted);
+  if(saved)UiTextLine($"SLOT {continueSlot+1} · {saveDates[continueSlot]} · {saveCampaigns[continueSlot]}",new(x,y+118,650,25),14,OdcUiTokens.Muted);
   y+=160;
   foreach(var item in new[]{("campaign","Campaign"),("war-setup","Single-player War"),("multiplayer","Multiplayer")}){if(!saved&&item.Item1=="campaign")continue;UiButton(item.Item1,item.Item2,new(x-16,y,560,48),item.Item2);y+=56;}
   y=Math.Min(UiSize.Y-96,y+24);
