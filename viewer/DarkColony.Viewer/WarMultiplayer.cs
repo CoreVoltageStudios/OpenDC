@@ -21,7 +21,7 @@ public partial class Viewer {
   var panel=new PanelContainer();multiplayerRoot.AddChild(panel);panel.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
   var scroll=new ScrollContainer{HorizontalScrollMode=ScrollContainer.ScrollMode.Disabled,FollowFocus=true};panel.AddChild(scroll);var rows=new VBoxContainer{SizeFlagsHorizontal=Control.SizeFlags.ExpandFill};scroll.AddChild(rows);rows.AddThemeConstantOverride("separation",16);rows.AddChild(WarLabel("Multiplayer",40));
   var intro=WarLabel("Host a battle or join by LAN / virtual-LAN address.\nEvery player needs the same OpenDC build and original content.");intro.AutowrapMode=TextServer.AutowrapMode.WordSmart;rows.AddChild(intro);
-  rows.AddChild(WarLabel("Player name"));var name=new LineEdit{Text=System.Environment.UserName.Length>16?System.Environment.UserName[..16]:System.Environment.UserName,MaxLength=16};rows.AddChild(name);
+  rows.AddChild(WarLabel("Player name"));var name=new LineEdit{Text=ArtworkPreference.LoadMultiplayerName(artworkPreferencePath),PlaceholderText="Choose a display name",MaxLength=16};rows.AddChild(name);
   var cards=new HBoxContainer();cards.AddThemeConstantOverride("separation",24);rows.AddChild(cards);
   var hosting=WarSection(cards,"Host a battle",false);var hostingText=WarLabel("Choose the map, players and match options. Share a reachable LAN or virtual-LAN address.");hostingText.AutowrapMode=TextServer.AutowrapMode.WordSmart;hosting.AddChild(hostingText);var host=new Button{Text="Host battle",CustomMinimumSize=new(260,46)};hosting.AddChild(host);
   var joining=WarSection(cards,"Join by address",false);var addressRow=new HBoxContainer();joining.AddChild(addressRow);var address=new LineEdit{PlaceholderText="Host LAN / VPN address",SizeFlagsHorizontal=Control.SizeFlags.ExpandFill,CustomMinimumSize=new(260,40)};addressRow.AddChild(address);
@@ -30,6 +30,7 @@ public partial class Viewer {
   var help=WarLabel("UDP port "+WarNetworkSession.DefaultPort+" by default. Allow OpenDC through your private-network firewall if prompted. On Hamachi, join using the host's Hamachi IPv4 address. No port or firewall rules are changed by OpenDC.",14);help.AutowrapMode=TextServer.AutowrapMode.WordSmart;var helpToggle=new Button{Text="Connection help ▾"};rows.AddChild(helpToggle);help.Visible=false;helpToggle.Pressed+=()=>help.Visible=!help.Visible;rows.AddChild(help);
   var back=new Button{Text="Back   Esc",CustomMinimumSize=new(180,42)};rows.AddChild(back);back.Pressed+=()=>{CloseNetwork();focusedUi="multiplayer";};
   void Connect(bool hosting){try{string playerName=WarNetworkSession.CleanName(name.Text);if(!hosting&&string.IsNullOrWhiteSpace(address.Text))throw new InvalidDataException("Enter the host's LAN or VPN address.");
+   SaveSettings(p=>ArtworkPreference.SaveMultiplayerName(p,playerName),"Display name could not be saved. It will be used for this session only.");
    CloseNetwork();network=new(Path.Combine(root,"private/DC"),Path.Combine(PersistenceRoot,"network-diagnostics"),playerName,hosting,address.Text,(int)port.Value);
    name.Text=playerName;name.Editable=false;
    var owner=network;owner.Changed+=()=>{if(ReferenceEquals(network,owner))networkDirty=true;};owner.Log+=s=>GD.Print(s);owner.MatchReady+=()=>{if(ReferenceEquals(network,owner))InstallNetworkMatch();};

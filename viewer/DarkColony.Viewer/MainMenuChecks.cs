@@ -9,8 +9,10 @@ public partial class Viewer {
   if(missionSuite=="camera-overscroll"){await VerifyCameraOverscroll();}
   else if(missionSuite=="scenery-occlusion"){await VerifySceneryOcclusion();}
   else if(missionSuite=="network-names"){await VerifyNetworkNames();}
+  else if(missionSuite=="name-preference"){await VerifyNamePreference();}
   else if(missionSuite=="enet-departure"){await VerifyDepartureUi();}
   else if(missionSuite=="landfall-replay"){await VerifyLandfallReplay();}
+  else if(missionSuite=="motion-preference"){await VerifyMotionPreference();}
   else if(missionSuite=="landfall-results"){await VerifyLandfallResults();}
   else if(missionSuite=="landfall-performance"){await VerifyLandfallPerformance();}
   else if(missionSuite=="landfall"){await VerifyLandfall();}
