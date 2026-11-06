@@ -13,7 +13,7 @@ public partial class Viewer {
  readonly List<OptionButton> warOptionsControls=new();
  HBoxContainer? warColumns;
  readonly List<WarNetworkSession> retiredNetworks=new();
- void CloseNetwork(){if(network!=null){fastGame=ArtworkPreference.LoadFast(artworkPreferencePath);network.Leave();retiredNetworks.Add(network);}network=null;networkHud?.Hide();multiplayerRoot?.Hide();}
+ void CloseNetwork(){warNameDrafts.Clear();if(network!=null){fastGame=ArtworkPreference.LoadFast(artworkPreferencePath);network.Leave();retiredNetworks.Add(network);}network=null;networkHud?.Hide();multiplayerRoot?.Hide();}
  void OpenMultiplayer(string message=""){
   HideWarSetup();missionPanel="";focusedUi="";ReleasePointerBoundary();multiplayerRoot?.QueueFree();
   // Match WarSetup: scaled UI glyphs/icons must not inherit the world's nearest filter.
@@ -29,11 +29,12 @@ public partial class Viewer {
   networkMessage=WarLabel(message);networkMessage.AutowrapMode=TextServer.AutowrapMode.WordSmart;networkMessage.SizeFlagsVertical=Control.SizeFlags.ExpandFill;networkMessage.AddThemeColorOverride("font_color",new Color("edbf68"));rows.AddChild(networkMessage);
   var help=WarLabel("UDP port "+WarNetworkSession.DefaultPort+" by default. Allow OpenDC through your private-network firewall if prompted. On Hamachi, join using the host's Hamachi IPv4 address. No port or firewall rules are changed by OpenDC.",14);help.AutowrapMode=TextServer.AutowrapMode.WordSmart;var helpToggle=new Button{Text="Connection help ▾"};rows.AddChild(helpToggle);help.Visible=false;helpToggle.Pressed+=()=>help.Visible=!help.Visible;rows.AddChild(help);
   var back=new Button{Text="Back   Esc",CustomMinimumSize=new(180,42)};rows.AddChild(back);back.Pressed+=()=>{CloseNetwork();focusedUi="multiplayer";};
-  void Connect(bool hosting){try{if(!hosting&&string.IsNullOrWhiteSpace(address.Text))throw new InvalidDataException("Enter the host's LAN or VPN address.");
-   CloseNetwork();network=new(Path.Combine(root,"private/DC"),Path.Combine(PersistenceRoot,"network-diagnostics"),name.Text,hosting,address.Text,(int)port.Value);
+  void Connect(bool hosting){try{string playerName=WarNetworkSession.CleanName(name.Text);if(!hosting&&string.IsNullOrWhiteSpace(address.Text))throw new InvalidDataException("Enter the host's LAN or VPN address.");
+   CloseNetwork();network=new(Path.Combine(root,"private/DC"),Path.Combine(PersistenceRoot,"network-diagnostics"),playerName,hosting,address.Text,(int)port.Value);
+   name.Text=playerName;name.Editable=false;
    var owner=network;owner.Changed+=()=>{if(ReferenceEquals(network,owner))networkDirty=true;};owner.Log+=s=>GD.Print(s);owner.MatchReady+=()=>{if(ReferenceEquals(network,owner))InstallNetworkMatch();};
    if(hosting){warSetup=network.Setup.Copy();OpenWarSetup();networkDirty=true;}else{multiplayerRoot!.Show();host.Disabled=join.Disabled=true;networkMessage.Text="Connecting… Back cancels this attempt.";}
-  }catch(Exception e){multiplayerRoot!.Show();networkMessage.Text=e.Message;host.Disabled=join.Disabled=false;}}
+  }catch(Exception e){multiplayerRoot!.Show();networkMessage.Text=e.Message;host.Disabled=join.Disabled=false;name.Editable=true;}}
   host.Pressed+=()=>Connect(true);join.Pressed+=()=>Connect(false);name.GrabFocus();QueueRedraw();
  }
  void LayoutMultiplayer(){if(!MultiplayerVisible)return;float width=Math.Min(1140,UiSize.X-96),height=Math.Min(700,UiSize.Y-96);multiplayerRoot!.Scale=Vector2.One*ui;multiplayerRoot.Size=new(width,height);multiplayerRoot.Position=(GetViewportRect().Size-multiplayerRoot.Size*ui)/2;}
@@ -49,7 +50,7 @@ public partial class Viewer {
   }
   if(networkDirty&&network.Phase=="lobby"){
    networkDirty=false;networkBinding=true;
-   try{warSetup=network.Setup.Copy();if(!warSetupVisible){multiplayerRoot?.Hide();OpenWarSetup();}else{BindWarPlayers();FilterWarMaps();}BindNetworkLobby();}finally{networkBinding=false;}
+   try{warSetup=network.Setup.Copy();RestoreWarNameDrafts();if(!warSetupVisible){multiplayerRoot?.Hide();OpenWarSetup();}else{BindWarPlayers();FilterWarMaps();}BindNetworkLobby();}finally{networkBinding=false;}
   }
   if(network.Phase=="loading"){networkLobbyText.Text=network.Notice+"  "+network.Players.Count(p=>p.Loaded)+" / "+network.Players.Length;warStart.Disabled=true;if(networkReady!=null)networkReady.Disabled=true;warRoot!.MouseFilter=Control.MouseFilterEnum.Stop;SetNetworkControls(false);}
   if(IsNetworkMatch){
@@ -65,21 +66,35 @@ public partial class Viewer {
   for(int i=0;i<8;i++){
    bool connected=network.Players.Any(p=>p.Slot==i);bool editable=lobby&&(host&&!connected||i==network.LocalSlot)&&i<WarCatalog.Find(Path.Combine(root,"private/DC"),warSetup.MapId).Capacity;
    warRoles[i].Disabled=!host||connected||i>=WarCatalog.Find(Path.Combine(root,"private/DC"),warSetup.MapId).Capacity;
-   warRaces[i].Disabled=warColors[i].Disabled=warTeams[i].Disabled=!editable;warNames[i].Editable=editable;
+   warRaces[i].Disabled=warColors[i].Disabled=warTeams[i].Disabled=!editable;warNames[i].Editable=editable&&!connected;
+   warNames[i].TooltipText=connected?"Player names are fixed for this session. Choose a name before hosting or joining.":"";
   }
  }
  void BindNetworkLobby(){if(network==null)return;SetNetworkControls(network.Phase=="lobby");
   for(int i=0;i<8;i++){var p=network.Players.FirstOrDefault(p=>p.Slot==i);networkStates[i].Text=p==null?warSetup.Slots[i].Controller==WarController.None?"Inactive":warSetup.Slots[i].Controller==WarController.Remote?"Open slot":"Computer":(p.Id==1?"Host":"Player")+(p.Id==network.Id?" · You":"")+"\n"+(p.Loaded?"Loaded":p.Ready?"Ready":"Not ready");}
   int[] values={warSetup.Options.Storage,warSetup.Options.Artifacts,warSetup.Options.Erupting?1:0,warSetup.Options.Renewable?1:0,warSetup.Options.Quantity-1,warSetup.Options.Flow-1,warSetup.Options.CommanderRank};for(int i=0;i<warOptionsControls.Count;i++)warOptionsControls[i].Select(values[i]);
   networkLobbyText.Text=network.Host?"Host · UDP "+network.Port+" · "+string.Join("   |   ",WarNetworkSession.Addresses()):"Connected · UDP "+network.Port+" · Choose your settings and mark ready";
-  networkReady!.Text=network.Players.FirstOrDefault(p=>p.Id==network.Id)?.Ready==true?"Not ready":"Ready";networkReady.Disabled=false;
-  warStart.Visible=network.Host;warStart.Disabled=!network.CanStart;
+  networkReady!.Text=network.Players.FirstOrDefault(p=>p.Id==network.Id)?.Ready==true?"Not ready":"Ready";networkReady.Disabled=warNameDrafts.Count>0;
+  warStart.Visible=network.Host;warStart.Disabled=!network.CanStart||warNameDrafts.Count>0;
   warNotice.Text=network.Notice+"\n"+(network.Host?"Open slots accept connections. Every open slot must join or become AI / inactive before starting. Changes reset readiness.":"The host controls the map and match options.");
+  if(warNameDrafts.Count>0)warNotice.Text="Finish editing the player name (1 to 16 printable characters) before marking ready or starting.";
+ }
+ // An incomplete host-owned name is a local draft, not a session update. Keep it
+ // through incoming player/ready updates until it validates or its slot disappears.
+ readonly Dictionary<int,string> warNameDrafts=new();
+ void RestoreWarNameDrafts(){
+  if(network?.Host!=true){warNameDrafts.Clear();return;}
+  int capacity=WarCatalog.Find(Path.Combine(root,"private/DC"),warSetup.MapId).Capacity;
+  foreach(var entry in warNameDrafts.ToArray()){
+   if(entry.Key>=capacity||network.Players.Any(p=>p.Slot==entry.Key)){warNameDrafts.Remove(entry.Key);warSetup.Slots[entry.Key]=warSetup.Slots[entry.Key] with{Name=network.Setup.Slots[entry.Key].Name};}
+   else warSetup.Slots[entry.Key]=warSetup.Slots[entry.Key] with{Name=entry.Value};
+  }
  }
  void NetworkSetupChanged(){
   if(network==null||networkBinding||warBinding||network.Phase!="lobby")return;
-  try{if(network.Host)network.Configure(warSetup);else network.EditPlayer(warSetup.Slots[network.LocalSlot]);}
-  catch(Exception e){warNotice.Text=e.Message;warStart.Disabled=true;}
+  try{if(network.Host){RestoreWarNameDrafts();network.Configure(warSetup);warNameDrafts.Clear();}
+   else network.EditPlayer(warSetup.Slots[network.LocalSlot]);}
+  catch(Exception e){warNotice.Text=e.Message;warStart.Disabled=true;if(networkReady!=null)networkReady.Disabled=true;}
  }
  bool NetworkUiAction(string id){
   if(id=="multiplayer"){OpenMultiplayer();return true;}

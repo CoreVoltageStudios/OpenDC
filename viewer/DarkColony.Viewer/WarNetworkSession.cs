@@ -41,6 +41,7 @@ public sealed class WarNetworkSession : IDisposable {
  internal long DiagnosticFastForwardUntil=0;
  internal bool DiagnosticHoldSimulation;
  internal bool DiagnosticHoldLoading;
+ internal bool DiagnosticHoldIncoming;
  internal long DiagnosticFrameLimit=long.MaxValue;
  internal string? DiagnosticBuildOverride,DiagnosticContentOverride;
  public bool AllAcknowledged=>Players.Where(p=>p.Id!=1).All(p=>acks.GetValueOrDefault(p.Id)>=Frame);
@@ -91,15 +92,19 @@ public sealed class WarNetworkSession : IDisposable {
  void Publish(){if(Host)Broadcast(new("lobby"){Setup=Setup,Players=Players,Revision=Revision});Changed?.Invoke();}
  public void Configure(WarConfiguration config){
   if(!Host||Phase!="lobby")return;
-  config=config.Copy() with{Multiplayer=true};config.Validate(root);
+  config=config.Copy() with{Multiplayer=true};
+  // A peer's accepted handshake name is immutable for this session. Lobby
+  // configuration may change faction/colour/team, never rename a connected peer.
+  foreach(var p in Players)if(config.Slots is {Length:8}&&config.Slots[p.Slot]!=null)config.Slots[p.Slot]=config.Slots[p.Slot] with{Name=p.Name};
+  config.Validate(root);
   int capacity=WarCatalog.Find(root,config.MapId).Capacity;
   foreach(var p in Players){if(p.Slot>=capacity)throw new InvalidDataException("A connected player is outside this map's capacity. Choose a larger map or let that player leave.");
    if(config.Slots[p.Slot].Controller!=(p.Id==1?WarController.Local:WarController.Remote))throw new InvalidDataException("Connected player roles cannot be replaced with AI.");}
   
   Setup=config;ResetReady();Publish();
  }
- void ResetReady(){Revision++;Players=Players.Select(p=>p with{Ready=false,Loaded=false,Name=Setup.Slots[p.Slot].Name}).ToArray();}
- public void EditPlayer(WarSlot player){if(Phase!="lobby")return;if(Host){var c=Setup.Copy();c.Slots[LocalSlot]=player with{Controller=WarController.Local};Configure(c);}else Send(1,new("player"){Player=player,Revision=Revision});}
+ void ResetReady(){Revision++;Players=Players.Select(p=>p with{Ready=false,Loaded=false}).ToArray();}
+ public void EditPlayer(WarSlot player){if(Phase!="lobby"||Players.FirstOrDefault(p=>p.Id==Id) is not {} local)return;player=player with{Name=local.Name};if(Host){var c=Setup.Copy();c.Slots[LocalSlot]=player with{Controller=WarController.Local};Configure(c);}else Send(1,new("player"){Player=player,Revision=Revision});}
  public void Ready(bool value){if(Phase!="lobby")return;if(Host){Players=Players.Select(p=>p.Id==1?p with{Ready=value}:p).ToArray();Publish();}else Send(1,new("ready"){Flag=value,Revision=Revision});}
  public bool CanStart=>Host&&Phase=="lobby"&&Players.Length>=2&&Players.All(p=>p.Ready)&&Setup.Slots.Select((s,i)=>(s,i)).Where(p=>p.s.Controller==WarController.Remote).All(p=>Players.Any(x=>x.Slot==p.i));
  public void Start(){if(!CanStart)throw new InvalidOperationException("At least two connected players must be ready.");Setup.Validate(root);Peer.RefuseNewConnections=true;Broadcast(new("load"){Setup=Setup,Revision=Revision});BeginLoad(Setup);}
@@ -150,7 +155,7 @@ public sealed class WarNetworkSession : IDisposable {
     Players=Players.Append(new WarPeer(from,slot,joined)).ToArray();ResetReady();Publish();return;
    }
    var player=Players.FirstOrDefault(x=>x.Id==from);if(player==null){RejectPeer(from,"Join handshake required.");return;}
-   if(p.Kind=="player"&&Phase=="lobby"&&p.Player!=null&&p.Revision==Revision){var c=Setup.Copy();c.Slots[player.Slot]=p.Player with{Controller=WarController.Remote,Name=CleanName(p.Player.Name)};try{Configure(c);}catch(InvalidDataException e){Send(from,new("notice"){Message=e.Message});}return;}
+   if(p.Kind=="player"&&Phase=="lobby"&&p.Player!=null&&p.Revision==Revision){var c=Setup.Copy();c.Slots[player.Slot]=p.Player with{Controller=WarController.Remote,Name=player.Name};try{Configure(c);}catch(InvalidDataException e){Send(from,new("notice"){Message=e.Message});}return;}
    if(p.Kind=="ready"&&Phase=="lobby"&&p.Revision==Revision){Players=Players.Select(x=>x.Id==from?x with{Ready=p.Flag}:x).ToArray();Publish();return;}
    if(p.Kind=="loaded"&&Phase=="loading"){if(p.Hash.Length!=64){RejectPeer(from,"Invalid content fingerprint.");return;}remoteContent[from]=p.Hash;Players=Players.Select(x=>x.Id==from?x with{Loaded=true}:x).ToArray();Changed?.Invoke();return;}
    if(p.Kind=="command"){AcceptCommand(from,p);return;}
@@ -194,7 +199,7 @@ public sealed class WarNetworkSession : IDisposable {
   try{
    now=Time.GetTicksMsec();if(!TransportActive())return;Peer.Poll();if(disposed||Phase=="closed"||!TransportActive())return;
    if(!Host&&Phase=="connecting"&&!helloSent&&Peer.GetConnectionStatus()==MultiplayerPeer.ConnectionStatus.Connected){helloSent=true;Send(1,new("hello"){Build=DiagnosticBuildOverride??Build,Name=name});}
-   int count=0;while(Peer.GetAvailablePacketCount()>0&&count++<128){int from=Peer.GetPacketPeer();var bytes=Peer.GetPacket();ReceivedBytes+=bytes.Length;if(bytes.Length>MaxPacket){RejectPeer(from,"Oversized network message.");continue;}try{var p=JsonSerializer.Deserialize<WarPacket>(bytes,Json)??throw new InvalidDataException("Empty packet");Receive(from,p);}catch(Exception e) when(e is JsonException or InvalidDataException or ArgumentException){RejectPeer(from,"Invalid message: "+e.Message);}}
+   int count=0;while(!DiagnosticHoldIncoming&&Peer.GetAvailablePacketCount()>0&&count++<128){int from=Peer.GetPacketPeer();var bytes=Peer.GetPacket();ReceivedBytes+=bytes.Length;if(bytes.Length>MaxPacket){RejectPeer(from,"Oversized network message.");continue;}try{var p=JsonSerializer.Deserialize<WarPacket>(bytes,Json)??throw new InvalidDataException("Empty packet");Receive(from,p);}catch(Exception e) when(e is JsonException or InvalidDataException or ArgumentException){RejectPeer(from,"Invalid message: "+e.Message);}}
    if(Phase=="closed")return;
    foreach(var id in disconnectAt.Keys.ToArray())if(now>=disconnectAt[id]){disconnectAt.Remove(id);DisconnectTransport(id);}
    if(Phase=="leaving"){if(now>=leavingAt+1000)Phase="closed";return;}

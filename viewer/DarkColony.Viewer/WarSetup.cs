@@ -75,7 +75,7 @@ public partial class Viewer {
    race.ItemSelected+=n=>{if(warBinding)return;warSetup.Slots[slot]=warSetup.Slots[slot] with{Race=(int)n};BindWarPlayers();ValidateWarSetup();};
    color.ItemSelected+=n=>{if(warBinding)return;warSetup.Slots[slot]=warSetup.Slots[slot] with{Color=(int)n};ValidateWarSetup();};
    team.ItemSelected+=n=>{if(warBinding)return;warSetup.Slots[slot]=warSetup.Slots[slot] with{Team=(int)n};ValidateWarSetup();};
-   name.TextChanged+=s=>{if(warBinding)return;warSetup.Slots[slot]=warSetup.Slots[slot] with{Name=s};ValidateWarSetup();};
+   name.TextChanged+=s=>{if(warBinding||!name.Editable||network?.Players.Any(p=>p.Slot==slot)==true)return;if(network?.Host==true)warNameDrafts[slot]=s;warSetup.Slots[slot]=warSetup.Slots[slot] with{Name=s};ValidateWarSetup();};
   }
   var hint=WarLabel("Matching teams start allied. AI+ has twice the mining income.\nGrey rows are unavailable on this map; inactive slots are not opponents.",13);hint.AutowrapMode=TextServer.AutowrapMode.WordSmart;players.AddChild(hint);
   warNotice=WarLabel("");warNotice.AutowrapMode=TextServer.AutowrapMode.WordSmart;warNotice.AddThemeColorOverride("font_color",new Color("edbf68"));players.AddChild(warNotice);
@@ -100,8 +100,19 @@ public partial class Viewer {
   footer.AddChild(new Control{SizeFlagsHorizontal=Control.SizeFlags.ExpandFill});if(network!=null){networkReady=new Button{Text="Ready",CustomMinimumSize=new(170,44)};footer.AddChild(networkReady);networkReady.Pressed+=()=>network?.Ready(!(network.Players.FirstOrDefault(p=>p.Id==network.Id)?.Ready??false));}warStart=new Button{Text="Start battle",CustomMinimumSize=new(240,44)};warStart.AddThemeStyleboxOverride("normal",WarStyle("263019","c9d86b"));footer.AddChild(warStart);
   warStart.Pressed+=()=>{if(Time.GetTicksMsec()<warStartAfter)return;try{if(network!=null){network.Start();return;}StartWarMatch(warSetup with{Seed=capturing&&warDiagnosticSeed.HasValue?warDiagnosticSeed.Value:Random.Shared.Next(65536)});}catch(Exception e){warNotice.Text=e.Message;}};
  }
+ // Reassigning even identical LineEdit text resets its caret. Genuine model
+ // changes must also retain the user's editing position and selection.
+ static void BindWarName(LineEdit field,string value){
+  if(field.Text==value)return;
+  bool editing=field.Editable&&field.HasFocus(),selected=field.HasSelection();
+  int caret=field.CaretColumn,from=selected?field.GetSelectionFromColumn():0,to=selected?field.GetSelectionToColumn():0;
+  field.Text=value;
+  if(!editing)return;
+  field.CaretColumn=Math.Min(caret,value.Length);
+  if(selected)field.Select(Math.Min(from,value.Length),Math.Min(to,value.Length));
+ }
  void BindWarPlayers(){warBinding=true;int capacity=warMaps.Single(m=>m.Id==warSetup.MapId).Capacity;
-  for(int i=0;i<8;i++){var s=warSetup.Slots[i];bool unavailable=i>=capacity,off=s.Controller==WarController.None;if(network!=null)warRoles[i].SetItemText(4,network.Players.Any(p=>p.Slot==i)?"Player":"Open");warRoles[i].Select((int)s.Controller);warRoles[i].Disabled=unavailable;warRaces[i].Select(s.Race);warColors[i].Select(s.Color);warTeams[i].Select(s.Team);warNames[i].Text=s.Name;warNames[i].Editable=!unavailable&&!off;warRaces[i].Disabled=warColors[i].Disabled=warTeams[i].Disabled=unavailable||off;warRoles[i].TooltipText=unavailable?$"This map supports {capacity} slots. Choose a larger map to use slot {i+1}.":"You, AI, AI+ or inactive. Exactly one local player is required.";}
+  for(int i=0;i<8;i++){var s=warSetup.Slots[i];bool unavailable=i>=capacity,off=s.Controller==WarController.None;if(network!=null)warRoles[i].SetItemText(4,network.Players.Any(p=>p.Slot==i)?"Player":"Open");warRoles[i].Select((int)s.Controller);warRoles[i].Disabled=unavailable;warRaces[i].Select(s.Race);warColors[i].Select(s.Color);warTeams[i].Select(s.Team);BindWarName(warNames[i],s.Name);warNames[i].Editable=!unavailable&&(network==null?!off:network.Host&&network.Phase=="lobby"&&!network.Players.Any(p=>p.Slot==i));warRaces[i].Disabled=warColors[i].Disabled=warTeams[i].Disabled=unavailable||off;warRoles[i].TooltipText=unavailable?$"This map supports {capacity} slots. Choose a larger map to use slot {i+1}.":"You, AI, AI+ or inactive. Exactly one local player is required.";}
   if(warRank!=null){int race=warSetup.Slots.FirstOrDefault(s=>s.Controller==WarController.Local)?.Race??0;var names=nativeData.Reference.Ints(race==0?0x488cecU:0x488cfcU,4).Select(p=>nativeData.Reference.Text((uint)p).Trim()).ToArray();for(int i=0;i<4;i++)warRank.SetItemText(i,names[i]);}
   warBinding=false;
  }
