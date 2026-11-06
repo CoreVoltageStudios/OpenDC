@@ -1,9 +1,14 @@
 # OpenDC — A modern engine for Dark Colony.
 
-OpenDC is an independent restoration project by Core Voltage Studios. This is the
-**1.0.0 RC1 playtest source baseline**, including the base campaigns, optional
-Council Wars campaigns, training, Single-player War and LAN/direct-IP Multiplayer
-War. It retains the RC1 playtest behavior; known bugs are tracked in
+Bring your copy of Dark Colony back to life. Import your original game files,watch 
+the colony awaken, and return to Mars as the Humans or the Taar. OpenDC is an independent
+restoration by Core Voltage Studios. Play all 30 original campaign missions on modern
+Windows, learn either faction across 14 training lessons, or take the fight to one of 56 War maps.
+If you own The Council Wars, its 16 missions join yours. For multiplayer, up to eight players 
+can face off or form alliances over LAN or direct IP.
+
+1.0.0 RC1 is the first public playtest. If a mission plays differently than you remember or 
+something goes wrong in battle, we’d love to hear what happened.
 [GitHub Issues](https://github.com/CoreVoltageStudios/OpenDC/issues).
 
 ## Bring your own game
