@@ -11,7 +11,7 @@ public partial class Viewer {
   Group("DISPLAY");rows.Add(($"Interface size  {ui:0.###}×",new[]{"ui-","ui+"},new[]{"−","+"},"Interface size is independent of world zoom."));
   rows.Add(("World artwork",new[]{"art-classic","art-crisp"},new[]{"Classic","Crisp"},"Original artwork with smooth or unfiltered sampling."));
   rows.Add(("Maximum width",new[]{"aspect:0","aspect:16","aspect:21"},new[]{"Full width","16:9","21:9"},"Center the complete game within this maximum aspect ratio."));
-  Row("Reduce motion","reduce-motion",reducedMotion?"On":"Off","Overrides Windows animation preference. Keeps original briefing content.");
+  Row("Reduce motion","reduce-motion",reducedMotion?"On":"Off","Saved OpenDC preference. Off by default. Keeps original briefing content.");
   Group("CAMERA");Row("Mouse-edge scrolling","edge-toggle",edgeScrolling?"On":"Off","Scroll at the active game boundary.");
   rows.Add(($"Scroll speed  {edgeSpeed:0.##}×",new[]{"edge-","edge+"},new[]{"−","+"},"Arrow keys remain available. No WASD shortcuts."));
   Group("SOUND");rows.Add(($"Effects and voices  {sfxVolume:P0}",new[]{"sfx-","sfx+"},new[]{"−","+"},"Includes briefing typing, original voices and restoration effects."));rows.Add(($"CD music  {musicVolume:P0}",new[]{"music-","music+"},new[]{"−","+"},"Music requires the original CD audio tracks. Voices and effects are separate."));
