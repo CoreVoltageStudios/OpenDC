@@ -1,6 +1,5 @@
 using Godot;
 using DarkColony.ContentImport;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 namespace DarkColony.Viewer;
 
@@ -25,8 +24,13 @@ public partial class Viewer {
  ImportStage restorationStage;bool restorationVerified;string restorationReceipt="";
  readonly Dictionary<string,AudioStreamWav> restorationOriginal=new();readonly HashSet<string> restorationPlayed=new();
  void OriginalRestorationSound(string name,float db){if(restorationRoot==null||!restorationOriginal.TryGetValue(name,out var sound)||!restorationPlayed.Add(name)||restorationSkipped)return;var player=new AudioStreamPlayer{Stream=sound,VolumeDb=db+Mathf.LinearToDb(Math.Max(.0001f,sfxVolume))};restorationRoot.AddChild(player);player.Finished+=()=>player.QueueFree();player.Play();}
- [DllImport("user32.dll",SetLastError=true)]static extern bool SystemParametersInfo(uint action,uint param,out int value,uint flags);
- void LoadMotionPreference(){reducedMotion=OperatingSystem.IsWindows()&&SystemParametersInfo(0x1042,0,out int animate,0)&&animate==0;try{using var d=JsonDocument.Parse(File.ReadAllText(artworkPreferencePath));if(d.RootElement.TryGetProperty("reducedMotion",out var v)&&v.ValueKind is JsonValueKind.True or JsonValueKind.False)reducedMotion=v.GetBoolean();}catch(Exception e)when(e is IOException or JsonException){} }
+ // OpenDC owns this preference. Missing/invalid values mean normal animation;
+ // existing explicit booleans remain authoritative, independent of Windows.
+ void LoadMotionPreference(){
+  reducedMotion=false;
+  try{using var d=JsonDocument.Parse(File.ReadAllText(artworkPreferencePath));if(d.RootElement.TryGetProperty("reducedMotion",out var v)&&v.ValueKind is JsonValueKind.True or JsonValueKind.False)reducedMotion=v.GetBoolean();}
+  catch(Exception e)when(e is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException){}
+ }
  void BeginRestorationHold(bool replay=false){
   EndRestoration();restorationReplay=replay;restorationFirstRun=!replay;restorationSkipped=false;restorationVerified=false;restorationClock=0;restorationContact=restorationWake=-1;colonyTask=null;
   restorationRoot=new Control{Name="Restoration",ZIndex=450,MouseFilter=Control.MouseFilterEnum.Ignore};AddChild(restorationRoot);restorationRoot.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);

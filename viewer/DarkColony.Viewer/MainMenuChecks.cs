@@ -12,6 +12,7 @@ public partial class Viewer {
   else if(missionSuite=="name-preference"){await VerifyNamePreference();}
   else if(missionSuite=="enet-departure"){await VerifyDepartureUi();}
   else if(missionSuite=="landfall-replay"){await VerifyLandfallReplay();}
+  else if(missionSuite=="motion-preference"){await VerifyMotionPreference();}
   else if(missionSuite=="landfall-results"){await VerifyLandfallResults();}
   else if(missionSuite=="landfall-performance"){await VerifyLandfallPerformance();}
   else if(missionSuite=="landfall"){await VerifyLandfall();}
