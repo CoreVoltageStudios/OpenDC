@@ -96,6 +96,14 @@ maps. It is not a full playthrough. Other recovery diagnostics deliberately corr
 **disposable** imports; never point them at your normal library. Developer fixtures
 and proprietary test inputs are not distributed.
 
+The focused War startup regression reads an imported base-game library without
+changing it. It checks shuffled owner assignments, alliances, hostility and separate
+shared vision before the first simulation step and again at tick 1:
+
+```powershell
+dotnet run --project ./viewer/DarkColony.ImportChecks -c Release -- war-startup ./generated/check-content
+```
+
 Multiplayer uses direct LAN/virtual-LAN IPv4 and UDP 27960, up to eight occupied
 slots. Both computers need compatible builds and separately supplied content.
 There is no host migration, joining in progress, reconnect, multiplayer save/load

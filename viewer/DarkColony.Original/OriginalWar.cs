@@ -24,6 +24,8 @@ public sealed partial class OriginalMission {
    for(int b=0;b<8;b++){
     bool allied=a==b||slot!=null&&w.Slot(b) is {} other&&slot.Team==other.Team;
     World.Teams[a].Allies[b]=allied?1:0;
+    // Combat relations must agree with the starting offers before the first tick.
+    World.Relations[a,b]=allied;
     //40192a: AI grants sight to its starting allies; people must offer it.
     if(a==b||allied&&slot?.Controller is WarController.Ai or WarController.AiPlus)w.VisionOffers[a]|=1<<b;
    }
