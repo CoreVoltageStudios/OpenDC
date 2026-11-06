@@ -36,7 +36,7 @@ public static class OriginalShadow {
    int px=anchorX+shadow.X+x,py=groundY+shadow.Y+y;
    //469500 uses unexpanded sprite H;468b51 decrements on every projected row.
    //Thus cutoff is shifted upward by Extra, independently of altitude.
-   if(terrain.HiddenWithCutoffOffset(px,py,bottomY,-shadow.Extra))raster.Rgba[(y*raster.Width+x)*4+3]=0;
+   if(terrain.HiddenForGround(px,py,bottomY,groundY,-shadow.Extra))raster.Rgba[(y*raster.Width+x)*4+3]=0;
   }
   return raster;
  }
