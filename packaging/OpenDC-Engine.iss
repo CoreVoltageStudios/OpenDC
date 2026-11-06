@@ -18,6 +18,10 @@
  #define SemanticVersion "1.0.0-rc.1"
 #endif
 
+#ifndef InstallNotice
+ #define InstallNotice "RC1-INSTALL-NOTICE.txt"
+#endif
+
 [Setup]
 AppId={code:ProductId}
 AppName=OpenDC
@@ -50,7 +54,7 @@ SetupMutex=Local\OpenDC.Engine.Setup{code:Suffix}
 CloseApplications=no
 RestartApplications=no
 WizardStyle=modern
-InfoBeforeFile=RC1-INSTALL-NOTICE.txt
+InfoBeforeFile={#InstallNotice}
 Uninstallable=yes
 SetupLogging=yes
 

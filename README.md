@@ -78,6 +78,12 @@ To build a local installer from a clean committed tree (choose fresh paths):
   -Destination "$env:TEMP\OpenDC-rc1-installer"
 ```
 
+For a later candidate, pass all three version overrides to either build script:
+`-DisplayVersion '1.0.0 RC2' -SemanticVersion '1.0.0-rc.2' -NumericVersion '1.0.0.2'`.
+The installer wrapper versions the executable, installer, installation notice and
+`TESTER-README.txt` together. Omitting overrides retains the recorded RC1 defaults.
+Always use fresh export and installer destinations.
+
 The export includes its self-contained .NET runtime, Godot, required notices and
 replaceable media-library source. Players need none of these development tools.
 Normal exported profiles use `%LOCALAPPDATA%\OpenDarkColony`, with the default
