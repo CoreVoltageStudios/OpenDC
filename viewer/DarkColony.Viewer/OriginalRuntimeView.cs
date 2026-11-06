@@ -233,8 +233,8 @@ public partial class Viewer {
    DrawRect(new(at+new Vector2(-16,-48),new(Math.Clamp(e.Health/(float)nativeData.Scenario.Types[e.Type].MaximumHealth,0,1)*32,3)),accent);
   }
   DrawSetTransform(Vector2.Zero);
-  if(firstStrike||interferenceDev)DrawMissionMarkings();
-  if(nativeSelecting){var start=nativeDragStart*zoom+NativeOffset;DrawRect(new Rect2(start,(firstStrike?missionPointer:GetViewport().GetMousePosition())-start).Abs().Intersection(NativeArea),accent,false,1);}
+  if(firstStrike||interferenceDev){DrawMissionMarkings();DrawOutsideMap();}
+  if(nativeSelecting){var start=nativeDragStart*zoom+NativeOffset;DrawRect(new Rect2(start,(firstStrike?missionPointer:GetViewport().GetMousePosition())-start).Abs().Intersection(NativeArea).Intersection(NativeMapScreenRect),accent,false,1);}
   if(firstStrike){DrawFirstStrike();EndAnimationDraw();if(perfActive){perfHudMs=PerfElapsed(perfPart);perfDrawMs=PerfElapsed(perfDrawStart);}return;}
   if(interferenceDev){DrawDevelopment();EndAnimationDraw();return;}
   if(originalStateMode){DrawInspection();EndAnimationDraw();return;}

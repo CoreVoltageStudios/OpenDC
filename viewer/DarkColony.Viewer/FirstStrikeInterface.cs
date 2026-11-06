@@ -62,7 +62,19 @@ public partial class Viewer {
  void ResetMissionInterface(){landfallNavigation.Clear();developmentTab=1;developmentNotice="Select a unit, or choose an available product.";Array.Clear(relayPages);developmentPage=0;relayCatalogSource=null;missionPanel="";pressedUi=focusedUi="";targetMode="";minimapDragging=uiPointerOwned=nativeSelecting=dragging=false;briefingScroll=0;historyOffset=0;orderAnimation=new();cursorAnimation=new();cursorClock=orderClock=0;miniTick=-100;Input.MouseMode=Input.MouseModeEnum.Visible;}
  void DisposeMissionInterface(){miniCanvas?.Dispose();miniCanvas=null;miniTexture?.Dispose();miniTexture=null;foreach(var t in interfaceTextures.Values)t.Dispose();interfaceTextures.Clear();interfaceFont?.Dispose();interfaceFont=null;}
  bool MissionModal=>mainMenu|| (interferenceDev?missionFault!=null:missionBriefing||mission.AtOutcome||missionFault!=null||missionPanel.Length>0||missionNext);
- void ClampMissionCamera(){var map=nativeData.Scenario.Map;var half=NativeArea.Size/(2*zoom);camera.X=half.X>=map.Width*16?map.Width*16:Math.Clamp(camera.X,half.X,map.Width*32-half.X);camera.Y=half.Y>=map.Height*16?map.Height*16:Math.Clamp(camera.Y,half.Y,map.Height*32-half.Y);}
+ // Camera travel is presentation-only: the map edge may reach the viewport
+ // centre. Playable cells and command validation retain their original bounds.
+ void ClampMissionCamera(){var map=nativeData.Scenario.Map;camera.X=Math.Clamp(camera.X,0,map.Width*32);camera.Y=Math.Clamp(camera.Y,0,map.Height*32);}
+ Rect2 NativeMapScreenRect=>new(NativeOffset,new Vector2(nativeData.Scenario.Map.Width*32,nativeData.Scenario.Map.Height*32)*zoom);
+ void DrawOutsideMap(){
+  var area=NativeArea;var visible=area.Intersection(NativeMapScreenRect);
+  if(!visible.HasArea()){DrawRect(area,Colors.Black);return;}
+  DrawRect(new(area.Position,new(visible.Position.X-area.Position.X,area.Size.Y)),Colors.Black);
+  DrawRect(new(new(visible.End.X,area.Position.Y),new(area.End.X-visible.End.X,area.Size.Y)),Colors.Black);
+  DrawRect(new(visible.Position.X,area.Position.Y,visible.Size.X,visible.Position.Y-area.Position.Y),Colors.Black);
+  DrawRect(new(visible.Position.X,visible.End.Y,visible.Size.X,area.End.Y-visible.End.Y),Colors.Black);
+ }
+
  void UpdateMissionInterface(){
   ui=Math.Min(ui,Math.Max(.75f,GetViewportRect().Size.Y/720));
   ClampMissionCamera();nativeSelection.RemoveWhere(id=>nativeWorld.Slots[id.Slot] is not {Living:true} e||e.Owner!=LocalTeam||e.Incarnation!=id.Incarnation);
@@ -79,7 +91,7 @@ public partial class Viewer {
   Input.MouseMode=custom?Input.MouseModeEnum.Hidden:Input.MouseModeEnum.Visible;
  }
  NativeEntity? UiHover(Vector2 point){
-  if(!NativeArea.HasPoint(point)||MissionModal)return null;
+  if(!NativeArea.HasPoint(point)||!NativeMapScreenRect.HasPoint(point)||MissionModal)return null;
   return nativeWorld.Entities.Where(e=>e.Living&&e.Owner<8&&e.Type!=94&&NativeVisible(e)).Select(e=>new{Entity=e,Rect=UnitHitRect(e)}).Where(x=>x.Rect.HasPoint(point)).OrderBy(x=>x.Rect.Size.X*x.Rect.Size.Y).Select(x=>x.Entity).FirstOrDefault();
  }
  Rect2 UnitHitRect(NativeEntity e){
@@ -205,6 +217,8 @@ public partial class Viewer {
    if(MissionModal)return true;
    if(b.ButtonIndex==MouseButton.Right&&b.Pressed&&(targetMode.Length>0||nativeAttackMove)){targetMode="";nativeAttackMove=false;nativeSelecting=false;return true;}
    if(!NativeArea.HasPoint(b.Position)){if(b.Pressed&&b.ButtonIndex==MouseButton.Left)uiPointerOwned=true;if(!b.Pressed&&b.ButtonIndex==MouseButton.Left)nativeSelecting=false;if(!b.Pressed&&b.ButtonIndex==MouseButton.Middle)dragging=false;return true;}
+   // Black overscroll space is navigation space, not a selection/order target.
+   if(b.Pressed&&b.ButtonIndex is MouseButton.Left or MouseButton.Right&&!NativeMapScreenRect.HasPoint(b.Position))return true;
    if(UnitTargetInput(b))return true;
    if(b.Pressed&&b.ButtonIndex==MouseButton.Right){var cell=NativeCell((b.Position-NativeOffset)/zoom);if(nativeWorld.Navigation.Inside(cell)){var e=UiHover(b.Position);if(e!=null&&!nativeWorld.Relations[LocalTeam,e.Owner])UiOrder(OriginalOrder.Attack,target:e.Slot);else UiOrder(OriginalOrder.MoveOnly,ResourceAt(b.Position)?.Cell??cell);}return true;}
   }
