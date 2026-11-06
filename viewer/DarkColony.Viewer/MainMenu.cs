@@ -12,7 +12,7 @@ public partial class Viewer {
  void ReturnMainMenu(){
   ClearLocalPause();
   CloseNetwork();HideWarSetup();ShutdownMissionMedia();missionMixer=null!;briefingVoice=null;transportAudio.Clear();missionSoundPaths.Clear();missionAudioAudit.Clear();
-  mission=null!;nativeWorld=null!;missionSounds=null!;missionRewards=null;campaignEntry=null;interferenceRoute=null;legacyRoute=null;breakthroughRoute=null;roswellRoute=null;
+  mission=null!;nativeWorld=null!;nativeOcclusion=null!;missionSounds=null!;missionRewards=null;campaignEntry=null;interferenceRoute=null;legacyRoute=null;breakthroughRoute=null;roswellRoute=null;
   nativeSelection.Clear();markerOffsets.Clear();interfaceClips.Clear();interfaceBanks.Clear();
   miniBase=miniPixels=miniVisibility=Array.Empty<byte>();miniSelector=-1;
   nativeAccumulator=missionWall=0;missionFault=null;missionNext=missionBriefing=missionOutcomeShown=campaignWritePending=false;
@@ -50,7 +50,7 @@ public partial class Viewer {
   UiLabel(saved?"YOUR LAST TRANSMISSION":"BEGIN YOUR JOURNEY",x,y,14,OdcUiTokens.Signal);y+=22;
   UiButton(hero,saved?"Continue":"Campaign",new(x-16,y,680,76),saved?"Resume the newest valid save":"Choose a campaign or training",active:true);
   UiTextLine(saved?saveTitles[continueSlot]:"Two worlds. One colony.",new(x,y+83,650,32),24,OdcUiTokens.Secondary);
-  if(saved)UiTextLine($"SLOT {continueSlot+1} · {saveDates[continueSlot]} · {saveCampaigns[continueSlot]}",new(x,y+118,650,25),14,OdcUiTokens.Muted);
+  if(saved)UiTextLine($"SLOT {continueSlot+1} Â· {saveDates[continueSlot]} Â· {saveCampaigns[continueSlot]}",new(x,y+118,650,25),14,OdcUiTokens.Muted);
   y+=160;
   foreach(var item in new[]{("campaign","Campaign"),("war-setup","Single-player War"),("multiplayer","Multiplayer")}){if(!saved&&item.Item1=="campaign")continue;UiButton(item.Item1,item.Item2,new(x-16,y,560,48),item.Item2);y+=56;}
   y=Math.Min(UiSize.Y-96,y+24);
