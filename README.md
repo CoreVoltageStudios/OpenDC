@@ -109,6 +109,10 @@ shared vision before the first simulation step and again at tick 1:
 dotnet run --project ./viewer/DarkColony.ImportChecks -c Release -- war-startup ./generated/check-content
 ```
 
+The [multiplayer name UI regression](docs/MULTIPLAYER-NAME-CHECKS.md) runs two
+independent localhost peers with isolated profiles, including a delayed incoming
+lobby update and a synchronized match startup.
+
 Multiplayer uses direct LAN/virtual-LAN IPv4 and UDP 27960, up to eight occupied
 slots. Both computers need compatible builds and separately supplied content.
 There is no host migration, joining in progress, reconnect, multiplayer save/load
