@@ -9,6 +9,7 @@ public partial class Viewer {
   if(missionSuite=="camera-overscroll"){await VerifyCameraOverscroll();}
   else if(missionSuite=="scenery-occlusion"){await VerifySceneryOcclusion();}
   else if(missionSuite=="network-names"){await VerifyNetworkNames();}
+  else if(missionSuite=="name-preference"){await VerifyNamePreference();}
   else if(missionSuite=="enet-departure"){await VerifyDepartureUi();}
   else if(missionSuite=="landfall-replay"){await VerifyLandfallReplay();}
   else if(missionSuite=="landfall-results"){await VerifyLandfallResults();}
