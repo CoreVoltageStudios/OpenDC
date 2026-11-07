@@ -23,11 +23,16 @@ public partial class ColonyScene : Control {
  public override void _ExitTree(){if(!transferring)Clear();}
  public override void _Process(double delta){if(!Visible)return;clock+=delta;QueueRedraw();}
  static float Ease(float v){v=Math.Clamp(v,0,1);return v*v*(3-2*v);}
+ // FIN city components already contain their offsets from this common artwork anchor.
+ // Ground contacts sit inside the basin; sprite height may cross the skyline.
+ static readonly Vector2 CityAnchor=new(1020,430);
+ static readonly Vector2 DishAnchor=new(1080,480),BeaconAnchor=new(1050,545);
+ static readonly Vector2 TowerApex=CityAnchor+new Vector2(0,-266);
  public Vector2 TowerTip {get;private set;}
  public override void _Draw(){
   if(lit==null)return;float s=Size.Y/480f;float opened=Settled?1:Reduced?0:Awakening?Ease((float)(AwakeningTime-4.2)/3):0;
   float anchor=Size.X*.5f+(Math.Min(Size.X,Size.Y*16/9)*.16f)*opened;
-  var origin=new Vector2(anchor-1100*s,-101*s);if(Settled&&!Reduced)origin.X+=MathF.Sin((float)clock*MathF.PI/70)*6*s;TowerTip=origin+new Vector2(1100,186)*s;
+  var origin=new Vector2(anchor-1100*s,-101*s);if(Settled&&!Reduced)origin.X+=MathF.Sin((float)clock*MathF.PI/70)*6*s;TowerTip=origin+TowerApex*s;
   var r=new Rect2(origin,new Vector2(1700,640)*s);float life=Settled?1:Awakening?Ease((float)(AwakeningTime-.9)/5.5f):0;
   DrawTextureRect(dormant!,r,false,new Color(1,1,1,Contact));
   if(life>0){if(Reduced||Settled)DrawTextureRect(lit,r,false,new Color(1,1,1,life*Contact));else for(int x=0;x<1700;x+=34){float alpha=Math.Clamp((life*1800-Math.Abs(x-1100))/320,0,1);if(alpha>0)DrawTextureRectRegion(lit,new(origin+new Vector2(x*s,0),new Vector2(34,640)*s),new(x,0,34,640),new Color(1,1,1,alpha*Contact));}}
@@ -39,9 +44,13 @@ public partial class ColonyScene : Control {
    DrawTextureRect(frame.Texture,new(origin+new Vector2(x+frame.X,y+frame.Y)*s,frame.Texture.GetSize()*s),false,new Color(1,1,1,Contact));
   }
   bool on=Settled||Awakening;
-  Sprite("dish",1318,392,on&&t>=2.3,2.3);Sprite("brrk",1100,420,on&&t>=1,1);Sprite("exco",1036,435,on&&t>=1,1);Sprite("tower",1100,452,on);
-  Sprite(on&&t>=1.6?"beaconOn":"beaconOff",1238,512,on&&t>=1.6,1.6);
-  if(on&&t>=2.8&&!Reduced){double lift=clips["lift"].Sum(f=>f.Seconds);if(t<2.8+lift)Sprite("lift",1100,420,true,2.8,true);else{float walk=Math.Clamp((float)(t-2.8-lift)/3.2f,0,1);Sprite(walk<1?"walk":"stand",1102-102*walk,459+53*walk,true,2.8+lift);}}
+  Sprite("dish",DishAnchor.X,DishAnchor.Y,on&&t>=2.3,2.3);
+  // Match the original city back-to-front order; logical slot offsets are not draw anchors.
+  Sprite("tower",CityAnchor.X,CityAnchor.Y,on);
+  Sprite("exco",CityAnchor.X,CityAnchor.Y,on&&t>=1,1);
+  Sprite("brrk",CityAnchor.X,CityAnchor.Y,on&&t>=1,1);
+  Sprite(on&&t>=1.6?"beaconOn":"beaconOff",BeaconAnchor.X,BeaconAnchor.Y,on&&t>=1.6,1.6);
+  if(on&&t>=2.8&&!Reduced){double lift=clips["lift"].Sum(f=>f.Seconds);if(t<2.8+lift)Sprite("lift",CityAnchor.X,CityAnchor.Y,true,2.8,true);else{float walk=Math.Clamp((float)(t-2.8-lift)/3.2f,0,1);Sprite(walk<1?"walk":"stand",CityAnchor.X+2-102*walk,CityAnchor.Y+39+53*walk,true,2.8+lift);}}
   float side=(Size.X-Math.Min(Size.X,Size.Y*4/3))/2*(1-opened);if(side>0){DrawRect(new(0,0,side,Size.Y),new Color("090a08"));DrawRect(new(Size.X-side,0,side,Size.Y),new Color("090a08"));}
  }
  public static Art Build(PresentationSnapshot source){
